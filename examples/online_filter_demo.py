@@ -9,7 +9,7 @@ from src.filters import OnlineBandpass
 FS = 250
 N_CHANNELS = 8
 
-streams = resolve_byprop("type", "EEG", 5)
+streams = resolve_byprop("type", "EEG", timeout=5)
 inlet = StreamInlet(streams[0])
 filt = OnlineBandpass(FS, 8, 30, N_CHANNELS)
 
