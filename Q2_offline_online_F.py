@@ -46,7 +46,7 @@ online_frame = np.array(online[:N])     # make it an array, to do the shift
 
 # Shift causal signal 15 samples earlier
 # Make array like the online_frame (np.full_like)
-online_shifted = np.full_like(online_frame, np.nan) 
+online_shifted = np.full_like(online_frame, np.nan)
 # the new array is the old array starting from the delay time
 online_shifted[:-DELAY] = online_frame[DELAY:]
 
@@ -57,16 +57,53 @@ plt.plot(online_shifted, label="online (causal, shifted 15 samples earlier)")
 
 plt.xlabel("Sample")
 plt.ylabel("Amplitude")
-plt.title("Offline vs Online Filtering, with online filtering shifted -15 samples")
+plt.title(
+    "Offline vs Online Filtering, with online filtering shifted -15 samples"
+    )
 plt.legend()
 plt.show()
 
 
-
 # Plot 4: visualizing phase shift and time delay (ms)
+
 LOW = 8
 HIGH = 30
 
-# Convert samples -> milliseconds
+# use freqz function from scipy:
+# this tests the frequency response of a filter
+frequencies, response = freqz(b, a, fs=FS)
+
+# angle() gives the phase shift in radians
+# Convert radians to degrees
+phase_degrees = np.angle(response) * 180 / np.pi
+
+# Calculate delay at each frequency
+# delay_samples tells us the delay in number of samples
+delay_frequencies, delay_samples = group_delay((b, a), fs=FS)
+
+# Convert samples to milliseconds
 delay_ms = delay_samples / FS * 1000
 
+# Keep the bandpassed frequencies, 8 to 30 Hz
+phase_band = (frequencies >= LOW) & (frequencies <= HIGH)
+delay_band = (delay_frequencies >= LOW) & (delay_frequencies <= HIGH)
+
+# Plot
+fig, axes = plt.subplots(2, 1, figsize=(8, 6))
+
+# Top: phase shift
+axes[0].plot(frequencies[phase_band], phase_degrees[phase_band])
+axes[0].set_title("Phase shift of causal 8–30 Hz bandpass filter")
+axes[0].set_xlabel("Frequency (Hz)")
+axes[0].set_ylabel("Phase shift (degrees)")
+axes[0].grid()
+
+# Bottom: time delay
+axes[1].plot(delay_frequencies[delay_band], delay_ms[delay_band])
+axes[1].set_title("Time delay of causal 8–30 Hz bandpass filter")
+axes[1].set_xlabel("Frequency (Hz)")
+axes[1].set_ylabel("Group delay (ms)")
+axes[1].grid()
+
+plt.tight_layout()
+plt.show()
