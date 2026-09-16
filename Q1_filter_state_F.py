@@ -12,12 +12,13 @@ FS = 250
 N_CHANNELS = 1
 
 signal = np.random.randn(FS * 5, N_CHANNELS)
+chunk_size = FS
 
 stateful_filt = OnlineBandpass(FS, 8, 30, N_CHANNELS)
-stateless = [stateful_filt.process([s])[0] for s in signal[:, 0]]
+stateful = [stateful_filt.process([s])[0] for s in signal[:, 0]]
 
 stateless_filt = Stateless(FS, 8, 30, N_CHANNELS)
-stateful = [stateless_filt.process([s])[0] for s in signal[:, 0]]
+stateless = [stateless_filt.process([s])[0] for s in signal[:, 0]]
 
 plt.plot(stateless, label="stateless (causal)")
 plt.plot(stateful, label="stateful (causal)")
