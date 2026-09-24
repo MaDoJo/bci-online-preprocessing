@@ -9,7 +9,6 @@ from src.windowing import SlidingWindow
 FS = 250
 N_CHANNELS = 8
 BUFFER_SEC = 2
-DURATION = 15
 DELAY = 15
 WINDOW_SIZE = DELAY * 2 + 1  
 
@@ -18,15 +17,9 @@ buffer = CircularBuffer(FS * BUFFER_SEC, N_CHANNELS)
 window_builder = SlidingWindow(size=WINDOW_SIZE, step=1)
 b, a = butter(4, [8, 30], fs=FS, btype="band")
 
-plt.ion()
 fig, ax = plt.subplots()
 
-latencies = []
-timestamps_list = []
-
-start_time = pylsl.local_clock()
-
-while pylsl.local_clock() - start_time < DURATION:
+while True:
     # pull_chunk retrieves all available samples in the LSL buffer at once
     chunk, timestamps = inlet.pull_chunk()
 
@@ -45,6 +38,7 @@ while pylsl.local_clock() - start_time < DURATION:
             window_data = np.array(window).T 
             
             # Apply non-causal filter across the time axis
+            print(window_data)
             filtered_window = filtfilt(b, a, window_data, axis=1)
             center_sample = filtered_window[:, DELAY]
             
