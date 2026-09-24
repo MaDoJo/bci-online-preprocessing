@@ -17,7 +17,7 @@ signal = np.random.randn(FS * 5, N_CHANNELS)
 causal_filt = OnlineBandpass(FS, 8, 30, N_CHANNELS)
 online_causal = [causal_filt.process([s])[0] for s in signal[:, 0]]
 
-# Quasi-causal filtering using SlidingWindow
+# Quasi-causal filtering
 DELAY = 15  
 WINDOW_SIZE = DELAY * 2 + 1  # 31 samples
 
