@@ -8,6 +8,7 @@ from src.filters import OnlineBandpass
 
 FS = 250
 N_CHANNELS = 8
+SIZE = 50
 
 streams = resolve_byprop("type", "EEG", timeout=5)
 inlet = StreamInlet(streams[0])

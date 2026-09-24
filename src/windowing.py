@@ -18,7 +18,7 @@ class SlidingWindow:
         if len(self.buffer) > self.size:
             self.buffer.pop(0)
 
-        if len(self.buffer) == self.size and self.counter % self.step == 0:
+        if len(self.buffer) == self.size and (self.counter - self.size) % self.step == 0:
             return np.array(self.buffer)
 
         return None
